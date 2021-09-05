@@ -1051,8 +1051,7 @@ html {
         const urlBarcontents = x || document.getElementById('urlbar').value;
         const urlThing = urlBarcontents.match(/http(s?):\/\/(([frame-z0-9]|\-|\_|\.){1,999})/gi);
         if (urlThing === null) throw Error('Invalid URL ' + urlBarcontents);
-        const b64Url = btoa(urlBarcontents);
-        return b64Url;
+        return urlBarcontents;
       }
       const getActiveFrameId = () => +document.querySelector(".chrome-tab[active]").getAttribute("ifd") + 1;
       function addPageToHistory(id, page) {
@@ -1096,7 +1095,7 @@ html {
         };
       };
       function setinfo(tabId) {
-        document.getElementsByClassName(tabId)[0].firstChild.data = decodeURIComponent(document.getElementById(tabId).contentWindow.location.href.split("/")[4]);
+        document.getElementsByClassName(tabId)[0].firstChild.data = decodeURIComponent(document.getElementById(tabId).contentWindow.location.href.split("/")[4]).split("//")[1];
         if (!document.getElementById(tabId).contentWindow.location.href.includes('/service/')) {
           addPageToHistory(tabId, document.getElementById(tabId).contentWindow.location.href);
           return;
@@ -1154,7 +1153,7 @@ html {
         }
       }
       function inspect() {
-        (function () { var script = document.createElement('script'); script.src = 'js/inspect.js'; script.className = 'webxray'; script.setAttribute('data-lang', 'en-US'); script.setAttribute('data-baseuri', 'https://x-ray-goggles.mouse.org'); document.body.appendChild(script); }())
+        alert("not ready yet")
       }
       function opencity(frame) {
         proxyFrames = document.getElementsByClassName('iframething');
@@ -1184,7 +1183,7 @@ html {
         document.getElementById('urlbar').value = '';
         var frameId = i++;
         var frame = document.createElement('IFRAME');
-        frame.setAttribute('src', 'https://' + location.host + '/service/https%3A%2F%2Fpresearch.org%2F/');
+        frame.setAttribute('src', 'https://' + location.host + '/service/https%3A%2F%2Fpresearch.org/');
         frame.setAttribute('allow', 'fullscreen');
         frame.setAttribute('sandbox', 'allow-same-origin allow-scripts allow-popups allow-forms allow-pointer-lock')
         document.body.appendChild(frame);
