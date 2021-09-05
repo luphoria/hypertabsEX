@@ -1102,8 +1102,8 @@ html {
         }
         console.log(document.getElementById(tabId + '1104'))
         let regUrl = document.getElementById(tabId).contentWindow.location.href;
-        document.getElementById('urlbar').value = decodeURIComponent(regUrl.split('/service/').slice(1).join('/service/')) 
-        
+        let t=0
+        document.getElementById('urlbar').value = decodeURIComponent(regUrl.split('/service/').slice(1).join('/service/')).replace(/\/\//g, match => ++t === 2 ? '' : match)
         document.querySelector(`div[ifd="${+tabId - 1}"]`).children[2].children[0].attributes[1].value = `background-image: url(${getBookmark()})`
         addPageToHistory(tabId, document.getElementById(tabId).contentWindow.location.href);
       }
@@ -1166,7 +1166,8 @@ html {
 
           default:
             let regUrl = document.getElementById(frame).contentWindow.location.href;
-            document.getElementById('urlbar').value = decodeURIComponent(regUrl.split('/service/').slice(1).join('/service/'))
+            let t=0
+            document.getElementById('urlbar').value = decodeURIComponent(regUrl.split('/service/').slice(1).join('/service/')).replace(/\/\//g, match => ++t === 2 ? '' : match)
             break;
         }
       }
