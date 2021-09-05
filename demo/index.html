@@ -1,16 +1,115 @@
 <!DOCTYPE html>
-<html>
-    <head>
+<html lang='en' class='dark-theme'>
+
+<head>
+  <meta charset='utf-8'>
+  <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+  <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'>
+<meta name="description" content="ur mom lol"/>
+<meta name="googlebot" content="index, follow, snippet"/>
+<meta name="keywords" content="Titanium Network, Hypertabs, Securly, iboss, Relay, Lightspeed, Bypass, Chromebooks, Alloy">
+<meta name="theme-color" content="#B48EAD">
+  <link href='css/demo.css' rel='stylesheet'>
+  <link href='css/chrome-tabs.css' rel='stylesheet'>
+  <link href='css/chrome-tabs-dark-theme.css' rel='stylesheet'>
+  <link href='https://fonts.googleapis.com/icon?family=Material+Icons' rel='stylesheet'>
+
+  <meta name="theme-color" content="#252729" />
+</head>
+
+<body id="alpha">
+  <div class='surface'>
+    <div class='mock-browser'>
+      <div class='chrome-tabs chrome-tabs-dark-theme' id="tabsmain" style='--tab-content-margin: 9px'>
+        <div class='chrome-tabs-content' id='0'>
+        </div>
+        <div class='chrome-tabs-bottom-bar'></div>
         <style>
-            body {
-                text-align: center;
-            }
+          .chrome-tabs .chrome-tab {
+            width: 258px;
+          }
+
+          .chrome-tabs .chrome-tab:nth-child(1) {
+            transform: translate3d(0px, 0, 0);
+          }
+
+          .chrome-tabs .chrome-tab:nth-child(2) {
+            transform: translate3d(239px, 0, 0);
+          }
         </style>
-    </head>
-    <body>
-        <form action="/service/gateway/" method="POST">
-            <input name="url" placeholder="Search the web">
-            <input type="submit" value="Go">
-        </form>
-    </body>
+      </div>
+      <button class='material-icons chrome-tab' data-add-tab id='createTab'>add</button>
+      <div class='mock-browser-content'>
+        <button id='urlbutton'
+          onclick='document.getElementById(getActiveFrameId()).src=getBack(getActiveFrameId())'><svg
+            xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="#757575"
+            preserveAspectRatio="xMidYMid meet">
+            <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"></path>
+          </svg></button>
+        <button id='urlbutton'
+          onclick='document.getElementById(getActiveFrameId()).src=getForward(getActiveFrameId())'><svg
+            xmlns="http://www.w3.org/2000/svg" style="transform: rotate(180deg)" width="24" height="24"
+            viewBox="0 0 24 24" fill="#757575" preserveAspectRatio="xMidYMid meet">
+            <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"></path>
+          </svg></button>
+        <button id='urlbutton'
+          onclick='document.getElementById(getActiveFrameId()).contentWindow.location.reload();'><svg
+            xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#5F6368">
+            <path
+              d="M17.65 6.35A7.958 7.958 0 0 0 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0 1 12 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z" />
+          </svg></button>
+        <input id='urlbar' />
+          <div id='extensionlist'></div>
+        <button id='options'
+          onclick='openMenu("optionsdrop", "themedrop", "extensiondrop", "uadrop", "customtheme");'>&#x22ee;</button>
+      </div>
+      <div id='optionsdrop' class='dropdown-content'>
+        <a class="pointer" onclick='toggleId("optionsdrop", "uadrop");'>Set Useragent</a>
+        <a class="pointer" onclick='inspect(); toggleId("optionsdrop");'>Inspect Element</a>
+        <a class="pointer" onclick='AddBookmark(); toggleId("optionsdrop");'>Add Bookmark</a>
+        <a class="pointer" onclick='toggleId("themedrop", "optionsdrop");'>Themes</a>
+        <a class="pointer" onclick='toggleId("extensiondrop", "optionsdrop");'>Extensions</a>
+      </div>
+      <div id="optiondrop" class='dropdown-content'>
+        <a class="pointer" onclick='toggleId("optiondrop", "optionsdrop");'>back</a>
+        <a class="pointer" onclick='toggleId("optiondrop", "uadrop");'>Set Useragent</a>
+        <a class="pointer" onclick='inspect(); toggleId("optiondrop");'>Inspect Element</a>
+      </div>
+      <div id="uadrop" class=dropdown-content>
+        <a class="pointer" onclick='toggleId("uadrop", "optiondrop");'>back</a>
+        <a >Set The Useragent (currently not working)</a>
+        <a onclick()></a>
+        <a class="pointer"><input class="aa" id="ua" type='text' /></a>
+        <a class="pointer" onclick='document.cookie=`alloyua=${localStorage.getItem("ua")}`; toggleId("uadrop");'>Apply</a>
+      </div>
+      <div id="themedrop" class='dropdown-content'>
+        <a onclick='toggleId("themedrop", "optionsdrop");'>back</a>
+        <a onclick='applyTheme("Dark"); toggleId("themedrop");'>Dark Theme</a>
+        <a onclick='applyTheme("Light"); toggleId("themedrop");'>Light Theme</a>
+        <a onclick='toggleId("customtheme", "themedrop")'>Custom Theme</a>
+      </div>
+      <div id="customtheme" class='dropdown-content'>
+        <a onclick='toggleId("customtheme", "themedrop")'>back</a>
+        <a>These are color values in hex.<br>To apply theme click apply.<br>NOTE: This will refresh the page.</a>
+        <a class="pointer">Background <input class="aa" id='tabbkg' type='text' /></a>
+        <a class="pointer">Tab Hover <input class="aa" id='tabhover' type='text' /></a>
+        <a class="pointer">Active Tab <input class="aa" id='tabact' type='text' /></a>
+        <a class="pointer">Active Tab Title <input class="aa" id='tabacttit' type='text' /></a>
+        <a class="pointer">Inactive Tab Title <input class="aa" id='tabinatit' type='text' /></a>
+        <a class="pointer">Searchbar<input class="aa" id='searchbar' type='text' /></a>
+        <a class="pointer" onclick='applyTheme("Apply"); toggleId("customtheme");'>Apply</a>
+        <a class="pointer" onclick='applyTheme("Reset"); toggleId("customtheme");'>Reset</a>
+      </div>
+      <div id="extensiondrop" class='dropdown-content'>
+        <a class="pointer" onclick='toggleId("extensiondrop", "optionsdrop")'>back</a>
+        <a>Coming very soon?</a>
+      </div>
+    </div>
+    <script src='js/draggabilly.pkgd.min.js'></script>
+    <script src='js/chrome-tabs.js'></script>
+    <script src='js/js.js'></script>
+    <script>document.cookie = "oldsmobile=badcar"</script>
+  </div>
+</body>
+
 </html>
