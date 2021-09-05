@@ -1095,7 +1095,7 @@ html {
         };
       };
       function setinfo(tabId) {
-        document.getElementsByClassName(tabId)[0].firstChild.data = decodeURIComponent(document.getElementById(tabId).contentWindow.location.href.split("/")[4]).split("//")[1];
+        document.getElementsByClassName(tabId)[0].firstChild.data = decodeURIComponent(document.getElementById(tabId).contentWindow.location.href.split("/")[4]).split("/")[2];
         if (!document.getElementById(tabId).contentWindow.location.href.includes('/service/')) {
           addPageToHistory(tabId, document.getElementById(tabId).contentWindow.location.href);
           return;
