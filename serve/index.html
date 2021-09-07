@@ -1112,7 +1112,7 @@ html {
               urlToCheck.setAttribute("href", "javascript:")
               urlToCheck.setAttribute("onclick", "window.parent.newTab(document.getElementsByClassName(\"a" + i + "\")[0].getAttribute(\"href" + i + "\"))")
               break
-            case "_parent" || "_self":
+            case "_parent" || "_top":
               urlToCheck.removeAttribute("target")
               break
             default:
