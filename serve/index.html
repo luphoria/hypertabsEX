@@ -602,6 +602,7 @@ html {
       </div>
       <button class='material-icons chrome-tab' data-add-tab id='createTab' onclick='newTab("https://presearch.org")'>add</button>
       <div class='mock-browser-content'>
+        <!-- back, forward, reload -->
         <button id='urlbutton'
           onclick='document.getElementById(getActiveFrameId()).src=getBack(getActiveFrameId())'><svg
             xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="#757575"
@@ -642,7 +643,7 @@ html {
         <frame >Set The Useragent (currently not working)</frame>
         <frame onclick()></frame>
         <frame class="pointer"><input class="tabId" id="ua" type='text' /></frame>
-        <frame class="pointer" onclick='document.cookie=`alloyua=${localStorage.getItem("ua")}`; toggleId("uadrop");'>Apply</frame>
+        <frame class="pointer" onclick='document.cookie=`cua=${localStorage.getItem("ua")}`; toggleId("uadrop");'>Apply</frame>
       </div>
       <div id="themedrop" class='dropdown-content'>
         <frame onclick='toggleId("themedrop", "optionsdrop");'>back</frame>
@@ -710,7 +711,7 @@ html {
           };
         
         var i = 1;
-          const defaultTapProperties = {
+          const defaultTabProperties = {
             title: 'New tab',
             favicon: false
           };
@@ -870,7 +871,7 @@ html {
                 setTimeout(() => tabEl.classList.remove('chrome-tab-was-just-added'), 500)
               }
         
-              tabProperties = Object.assign({}, defaultTapProperties, tabProperties)
+              tabProperties = Object.assign({}, defaultTabProperties, tabProperties)
               this.tabContentEl.appendChild(tabEl)
               this.setTabCloseEventListener(tabEl)
               console.log(tabProperties)
