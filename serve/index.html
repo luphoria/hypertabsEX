@@ -873,6 +873,7 @@ html {
               tabProperties = Object.assign({}, defaultTapProperties, tabProperties)
               this.tabContentEl.appendChild(tabEl)
               this.setTabCloseEventListener(tabEl)
+              console.log(tabProperties)
               this.updateTab(tabEl,tabProperties)
               this.emit('tabAdd', { tabEl })
 
@@ -1114,12 +1115,13 @@ html {
       }
       function setInfo(frameId) {
           // Sets tab information
-          document.getElementsByClassName(frameId)[0].firstChild.data = decodeURIComponent(document.getElementById(frameId).contentWindow.location.href).split("/")[6];
           if (!document.getElementById(frameId).contentWindow.location.href.includes('/service/')) {
             addPageToHistory(frameId, document.getElementById(frameId).contentWindow.location.href);
             return;
           }
           let regUrl = document.getElementById(frameId).contentWindow.location.href;
+          if(document.getElementById(frameId).contentDocument.getElementsByTagName("title")[0].firstChild.textContent) { document.getElementsByClassName(frameId)[0].firstChild.data = document.getElementById(frameId).contentDocument.getElementsByTagName("title")[0].firstChild.textContent }
+          else document.getElementsByClassName(frameId)[0].firstChild.data = decodeURIComponent(regUrl.split('/service/').slice(1).join('/service/')).replace(/\/\//g, match => ++t === 2 ? '' : match)
           let t=0
           document.getElementById('urlbar').value = decodeURIComponent(regUrl.split('/service/').slice(1).join('/service/')).replace(/\/\//g, match => ++t === 2 ? '' : match)
           document.querySelector(`div[ifd="${+frameId - 1}"]`).children[2].children[0].attributes[1].value = `background-image: url(${getBookmark()})`
@@ -1198,7 +1200,7 @@ html {
 
         frame.setAttribute('onload',`setInfo(`+frameId+`)`)
 
-      opencity(frameId);
+        opencity(frameId);
       }
       var hypertabContainer = document.querySelector('.chrome-tabs');
       var chromeTabs = new ChromeTabs();
