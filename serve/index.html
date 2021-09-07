@@ -911,11 +911,11 @@ html {
               if (tabEl === this.activeTabEl) {
                 if (tabEl.nextElementSibling) {
                   let tempval = +tabEl.nextElementSibling.getAttribute('ifd') + 1;
-                  document.getElementById(tempval).style = "display:inline";
+                  document.getElementById(tempval).style = "display:inline;background: #FFFFFF;";
                   this.setCurrentTab(tabEl.nextElementSibling);
                 } else if (tabEl.previousElementSibling) {
                   let tempval = +tabEl.previousElementSibling.getAttribute('ifd') + 1;
-                  document.getElementById(tempval).style = "display:inline";
+                  document.getElementById(tempval).style = "display:inline;background: #FFFFFF;";
                   this.setCurrentTab(tabEl.previousElementSibling);
                 }
               }
@@ -1175,7 +1175,7 @@ html {
         for (iframeIndex = 0; iframeIndex < proxyFrames.length; iframeIndex++) {
           proxyFrames[iframeIndex].style.display = 'none';
         }
-        document.getElementById(frame).style = 'display:inline';
+        document.getElementById(frame).style = 'display:inline;background: #FFFFFF;';
         document.getElementById(frame).focus();
         let regUrl = document.getElementById(frame).contentWindow.location.href;
         let t = 0
@@ -1195,7 +1195,7 @@ html {
         frame.setAttribute('sandbox', 'allow-same-origin allow-scripts allow-popups allow-forms allow-pointer-lock')
         document.body.appendChild(frame);
         frame.setAttribute('class', 'iframething');
-        frame.setAttribute('style', 'display:none');
+        frame.setAttribute('style', 'display:none; background: #FFFFFF;');
         frame.setAttribute('id', frameId);
 
         frame.setAttribute('onload',`setInfo(`+frameId+`)`)
