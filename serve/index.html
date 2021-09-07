@@ -1104,12 +1104,19 @@ html {
         // Rewrites any `a` elements on the page to no longer open in a new tab, but INSTEAD open in a new hypertab!! Does so by detecting the `target` attribute.
         for (i = 0; document.getElementById(tabId).contentWindow.document.getElementsByTagName("a").length > i; i++) {
           let urlToCheck = document.getElementById(tabId).contentWindow.document.getElementsByTagName("a")[i]
-          if (urlToCheck.attributes.getNamedItem("target") != null) {
-            urlToCheck.removeAttribute("target")
-            urlToCheck.classList.add("a" + i)
-            urlToCheck.setAttribute("href" + i, urlToCheck.href)
-            urlToCheck.setAttribute("href", "javascript:")
-            urlToCheck.setAttribute("onclick", "window.parent.newTab(document.getElementsByClassName(\"a" + i + "\")[0].getAttribute(\"href" + i + "\"))")
+          switch(urlToCheck.attributes.getNamedItem("target").textContent) {
+            case "_blank":
+              urlToCheck.removeAttribute("target")
+              urlToCheck.classList.add("a" + i)
+              urlToCheck.setAttribute("href" + i, urlToCheck.href)
+              urlToCheck.setAttribute("href", "javascript:")
+              urlToCheck.setAttribute("onclick", "window.parent.newTab(document.getElementsByClassName(\"a" + i + "\")[0].getAttribute(\"href" + i + "\"))")
+              break
+            case "_parent" || "_self":
+              urlToCheck.removeAttribute("target")
+              break
+            default:
+              break
           }
         }
       }
@@ -1298,7 +1305,11 @@ html {
             break
         }
       }
-      window.open = (url) => { window.parent.newTab(url) }
+      window.open = (url,a,[b]) => { 
+        if(!url) url = "https://presearch.org"
+        window.parent.newTab(url)
+        console.log("window.open params:\n" + url + "\n" + a + "\n" + b)
+      }
       </script>
   </div>
 </body>
