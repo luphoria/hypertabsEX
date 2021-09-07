@@ -600,7 +600,7 @@ html {
           }
         </style>
       </div>
-      <button class='material-icons chrome-tab' data-add-tab id='createTab'>add</button>
+      <button class='material-icons chrome-tab' data-add-tab id='createTab' onclick='newTab("https://presearch.org")'>add</button>
       <div class='mock-browser-content'>
         <button id='urlbutton'
           onclick='document.getElementById(getActiveFrameId()).src=getBack(getActiveFrameId())'><svg
@@ -935,6 +935,10 @@ html {
                 faviconEl.setAttribute('hidden', '')
                 faviconEl.removeAttribute('style')
               }
+
+              if(tabProperties.url) {
+                
+              }
         
               if (tabProperties.id) {
                 tabEl.setAttribute('data-tab-id', tabProperties.id)
@@ -1094,18 +1098,30 @@ html {
           return '/favicon.ico';
         };
       };
+      function rewriteTargets(tabId) {
+        for (i = 0; document.getElementById(tabId).contentWindow.document.getElementsByTagName("a").length > i; i++) {
+          let urlToCheck = document.getElementById(tabId).contentWindow.document.getElementsByTagName("a")[i]
+          if (urlToCheck.attributes.getNamedItem("target") != null) {
+            urlToCheck.removeAttribute("target")
+            urlToCheck.classList.add("a" + i)
+            urlToCheck.setAttribute("href" + i, urlToCheck.href)
+            urlToCheck.setAttribute("href", "javascript:")
+            urlToCheck.setAttribute("onclick", "window.parent.newTab(document.getElementsByClassName(\"a" + i + "\")[0].getAttribute(\"href" + i + "\"))")
+          }
+        }
+      }
       function setinfo(tabId) {
-        document.getElementsByClassName(tabId)[0].firstChild.data = decodeURIComponent(document.getElementById(tabId).contentWindow.location.href.split("/")[4]).split("/")[2];
+        document.getElementsByClassName(tabId)[0].firstChild.data = decodeURIComponent(document.getElementById(tabId).contentWindow.location.href).split("/")[6];
         if (!document.getElementById(tabId).contentWindow.location.href.includes('/service/')) {
           addPageToHistory(tabId, document.getElementById(tabId).contentWindow.location.href);
           return;
         }
-        console.log(document.getElementById(tabId + '1104'))
         let regUrl = document.getElementById(tabId).contentWindow.location.href;
         let t=0
         document.getElementById('urlbar').value = decodeURIComponent(regUrl.split('/service/').slice(1).join('/service/')).replace(/\/\//g, match => ++t === 2 ? '' : match)
         document.querySelector(`div[ifd="${+tabId - 1}"]`).children[2].children[0].attributes[1].value = `background-image: url(${getBookmark()})`
         addPageToHistory(tabId, document.getElementById(tabId).contentWindow.location.href);
+        rewriteTargets(tabId)
       }
       function action() {
         let value = document.getElementById('urlbar');
@@ -1171,20 +1187,17 @@ html {
             break;
         }
       }
-      var el = document.querySelector('.chrome-tabs');
-      var chromeTabs = new ChromeTabs();
-      chromeTabs.init(el);
-        var i = 2;
-      document.querySelector('button[data-add-tab]').addEventListener('click', _ => {
-        _.preventDefault()
+      newTab = (url) => {
+        // _.preventDefault()
         chromeTabs.addTab({
           title: 'New Hypertab',
           favicon: 'favicon.ico'
         });
         document.getElementById('urlbar').value = '';
-        var frameId = i++;
+        console.log(tabNum)
+        var frameId = tabNum++;
         var frame = document.createElement('IFRAME');
-        frame.setAttribute('src', 'https://' + location.host + '/service/https%3A%2F%2Fpresearch.org/');
+        frame.setAttribute('src', 'https://' + location.host + '/service/' + url);
         frame.setAttribute('allow', 'fullscreen');
         frame.setAttribute('sandbox', 'allow-same-origin allow-scripts allow-popups allow-forms allow-pointer-lock')
         document.body.appendChild(frame);
@@ -1193,7 +1206,11 @@ html {
         frame.setAttribute('id', frameId);
         frame.setAttribute('onload', `setinfo(${frameId})`);
         opencity(frameId);
-      })
+      }
+      var el = document.querySelector('.chrome-tabs');
+      var chromeTabs = new ChromeTabs();
+      chromeTabs.init(el);
+      var tabNum = 2;
       document.querySelector('#urlbar').addEventListener('keyup', event => {
         if (event.key !== 'Enter') return;
         action();
@@ -1276,7 +1293,7 @@ html {
             break
         }
       }
-      
+      window.open = (url) => { window.parent.newTab(url) }
       </script>
   </div>
 </body>
