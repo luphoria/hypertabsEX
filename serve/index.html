@@ -722,11 +722,11 @@ html {
               this.draggabillies = []
             };
         
-            init(el) {
-              this.el = el;
+            init(hypertabContainer) {
+              this.hypertabContainer = hypertabContainer;
         
               this.instanceId = instanceId;
-              this.el.setAttribute('data-chrome-tabs-instance-id', this.instanceId);
+              this.hypertabContainer.setAttribute('data-chrome-tabs-instance-id', this.instanceId);
               instanceId += 1;
         
               this.setupCustomProperties();
@@ -737,16 +737,16 @@ html {
             };
         
             emit(eventName, data) {
-              this.el.dispatchEvent(new CustomEvent(eventName, { detail: data }))
+              this.hypertabContainer.dispatchEvent(new CustomEvent(eventName, { detail: data }))
             }
         
             setupCustomProperties() {
-              this.el.style.setProperty('--tab-content-margin', `${ TAB_CONTENT_MARGIN }px`)
+              this.hypertabContainer.style.setProperty('--tab-content-margin', `${ TAB_CONTENT_MARGIN }px`)
             }
         
             setupStyleEl() {
               this.styleEl = document.createElement('style')
-              this.el.appendChild(this.styleEl)
+              this.hypertabContainer.appendChild(this.styleEl)
             }
         
             setupEvents() {
@@ -755,19 +755,19 @@ html {
                 this.layoutTabs()
               })
         
-              this.el.addEventListener('dblclick', event => {
-                if ([this.el, this.tabContentEl].includes(event.target)) this.addTab()
+              this.hypertabContainer.addEventListener('dblclick', event => {
+                if ([this.hypertabContainer, this.tabContentEl].includes(event.target)) this.addTab()
               })
         
               this.tabEls.forEach((tabEl) => this.setTabCloseEventListener(tabEl))
             }
         
             get tabEls() {
-              return Array.prototype.slice.call(this.el.querySelectorAll('.chrome-tab'))
+              return Array.prototype.slice.call(this.hypertabContainer.querySelectorAll('.chrome-tab'))
             }
         
             get tabContentEl() {
-              return this.el.querySelector('.chrome-tabs-content')
+              return this.hypertabContainer.querySelector('.chrome-tabs-content')
             }
         
             get tabContentWidths() {
@@ -871,12 +871,13 @@ html {
               }
         
               tabProperties = Object.assign({}, defaultTapProperties, tabProperties)
-              //this.tabEl.replace("opencity(shit)", `opencity('${i++}')`)
               this.tabContentEl.appendChild(tabEl)
               this.setTabCloseEventListener(tabEl)
-              this.updateTab(tabEl, tabProperties)
+              this.updateTab(tabEl,tabProperties)
               this.emit('tabAdd', { tabEl })
+
               if (!background) this.setCurrentTab(tabEl)
+
               this.cleanUpPreviouslyDraggedTabs()
               this.layoutTabs()
               this.setupDraggabilly()
@@ -890,7 +891,7 @@ html {
             }
         
             get activeTabEl() {
-              return this.el.querySelector('.chrome-tab[active]')
+              return this.hypertabContainer.querySelector('.chrome-tab[active]')
             }
         
             hasActiveTab() {
@@ -955,7 +956,7 @@ html {
         
               if (this.isDragging) {
                 this.isDragging = false
-                this.el.classList.remove('chrome-tabs-is-sorting')
+                this.hypertabContainer.classList.remove('chrome-tabs-is-sorting')
                 this.draggabillyDragging.element.classList.remove('chrome-tab-is-dragging')
                 this.draggabillyDragging.element.style.transform = ''
                 this.draggabillyDragging.dragEnd()
@@ -985,7 +986,7 @@ html {
                   this.isDragging = true
                   this.draggabillyDragging = draggabilly
                   tabEl.classList.add('chrome-tab-is-dragging')
-                  this.el.classList.add('chrome-tabs-is-sorting')
+                  this.hypertabContainer.classList.add('chrome-tabs-is-sorting')
                 })
         
                 draggabilly.on('dragEnd', _ => {
@@ -1000,7 +1001,7 @@ html {
         
                     requestAnimationFrame(_ => {
                       tabEl.classList.remove('chrome-tab-is-dragging')
-                      this.el.classList.remove('chrome-tabs-is-sorting')
+                      this.hypertabContainer.classList.remove('chrome-tabs-is-sorting')
         
                       tabEl.classList.add('chrome-tab-was-just-dragged')
         
@@ -1046,7 +1047,7 @@ html {
         
       </script>
       <script>
-        let history = {};
+      let history = {};
       let sir = true;
       
       // functions
@@ -1099,6 +1100,7 @@ html {
         };
       };
       function rewriteTargets(tabId) {
+        // Rewrites any `a` elements on the page to no longer open in a new tab, but INSTEAD open in a new hypertab!! Does so by detecting the `target` attribute.
         for (i = 0; document.getElementById(tabId).contentWindow.document.getElementsByTagName("a").length > i; i++) {
           let urlToCheck = document.getElementById(tabId).contentWindow.document.getElementsByTagName("a")[i]
           if (urlToCheck.attributes.getNamedItem("target") != null) {
@@ -1110,42 +1112,34 @@ html {
           }
         }
       }
-      function setinfo(tabId) {
-        document.getElementsByClassName(tabId)[0].firstChild.data = decodeURIComponent(document.getElementById(tabId).contentWindow.location.href).split("/")[6];
-        if (!document.getElementById(tabId).contentWindow.location.href.includes('/service/')) {
-          addPageToHistory(tabId, document.getElementById(tabId).contentWindow.location.href);
-          return;
-        }
-        let regUrl = document.getElementById(tabId).contentWindow.location.href;
-        let t=0
-        document.getElementById('urlbar').value = decodeURIComponent(regUrl.split('/service/').slice(1).join('/service/')).replace(/\/\//g, match => ++t === 2 ? '' : match)
-        document.querySelector(`div[ifd="${+tabId - 1}"]`).children[2].children[0].attributes[1].value = `background-image: url(${getBookmark()})`
-        addPageToHistory(tabId, document.getElementById(tabId).contentWindow.location.href);
-        rewriteTargets(tabId)
-      }
-      function action() {
-        let value = document.getElementById('urlbar');
-        if (value === '') {
-          alert('Please insert frame URL');
-        } else if (!value.value.includes('http')) {
-          value.value = "https://" + location.host + "/service/" + encodeURI("http://" + value.value);
-          document.getElementById(getActiveFrameId()).src = value.value;
-        } else {
-          value.value = "https://" + location.host + "/service/" + encodeURI(value.value);
-          document.getElementById(getActiveFrameId()).src = value.value;
-        }
+      function setInfo(frameId) {
+          // Sets tab information
+          document.getElementsByClassName(frameId)[0].firstChild.data = decodeURIComponent(document.getElementById(frameId).contentWindow.location.href).split("/")[6];
+          if (!document.getElementById(frameId).contentWindow.location.href.includes('/service/')) {
+            addPageToHistory(frameId, document.getElementById(frameId).contentWindow.location.href);
+            return;
+          }
+          let regUrl = document.getElementById(frameId).contentWindow.location.href;
+          let t=0
+          document.getElementById('urlbar').value = decodeURIComponent(regUrl.split('/service/').slice(1).join('/service/')).replace(/\/\//g, match => ++t === 2 ? '' : match)
+          document.querySelector(`div[ifd="${+frameId - 1}"]`).children[2].children[0].attributes[1].value = `background-image: url(${getBookmark()})`
+          addPageToHistory(frameId, document.getElementById(frameId).contentWindow.location.href);
+          rewriteTargets(frameId);
       }
       function hideId(...x) {
+        // Hides hypertab ID.
         x.forEach((frame) => {
           document.getElementById(frame).style.display = "none";
         });
       }
       function showId(...x) {
+        // Shows hypertab ID.
         x.forEach((frame) => {
           document.getElementById(frame).style.display = "block";
         });
       }
       function toggleId(...x) {
+        // Toggles between two hypertabs
         x.forEach((frame) => {
           if (getComputedStyle(document.getElementById(frame)).display === "none") {
             showId(frame);
@@ -1155,6 +1149,7 @@ html {
         });
       }
       function openMenu(...x) {
+        // displays additional settings!
         let elems = x.map((id) => document.getElementById(id));
         let shouldOpen = true;
         elems.forEach((elm) => {
@@ -1169,32 +1164,28 @@ html {
         }
       }
       function inspect() {
+        // (TODO) toggle Inspect Element!
         alert("not ready yet")
       }
       function opencity(frame) {
+        // creates the actual frame inside the hypertab!
         proxyFrames = document.getElementsByClassName('iframething');
         for (iframeIndex = 0; iframeIndex < proxyFrames.length; iframeIndex++) {
           proxyFrames[iframeIndex].style.display = 'none';
         }
         document.getElementById(frame).style = 'display:inline';
         document.getElementById(frame).focus();
-        switch (document.getElementById(frame).contentWindow.location.href) {
-
-          default:
-            let regUrl = document.getElementById(frame).contentWindow.location.href;
-            let t=0
-            document.getElementById('urlbar').value = decodeURIComponent(regUrl.split('/service/').slice(1).join('/service/')).replace(/\/\//g, match => ++t === 2 ? '' : match)
-            break;
-        }
+        let regUrl = document.getElementById(frame).contentWindow.location.href;
+        let t = 0
+        document.getElementById('urlbar').value = decodeURIComponent(regUrl.split('/service/').slice(1).join('/service/')).replace(/\/\//g, match => ++t === 2 ? '' : match)
       }
       newTab = (url) => {
-        // _.preventDefault()
+        // creates a new hypertab!!
         chromeTabs.addTab({
           title: 'New Hypertab',
           favicon: 'favicon.ico'
         });
         document.getElementById('urlbar').value = '';
-        console.log(tabNum)
         var frameId = tabNum++;
         var frame = document.createElement('IFRAME');
         frame.setAttribute('src', 'https://' + location.host + '/service/' + url);
@@ -1204,21 +1195,32 @@ html {
         frame.setAttribute('class', 'iframething');
         frame.setAttribute('style', 'display:none');
         frame.setAttribute('id', frameId);
-        frame.setAttribute('onload', `setinfo(${frameId})`);
-        opencity(frameId);
+
+        frame.setAttribute('onload',`setInfo(`+frameId+`)`)
+
+      opencity(frameId);
       }
-      var el = document.querySelector('.chrome-tabs');
+      var hypertabContainer = document.querySelector('.chrome-tabs');
       var chromeTabs = new ChromeTabs();
-      chromeTabs.init(el);
-      var tabNum = 2;
+      chromeTabs.init(hypertabContainer);
+      var tabNum = 2; // 0 and 1 are reserved for the GUI
       document.querySelector('#urlbar').addEventListener('keyup', event => {
-        if (event.key !== 'Enter') return;
-        action();
+        if (event.key !== 'Enter') return; 
+        // if user is entering a new URL!
+        if (document.getElementById('urlbar').value === '') {
+          alert('Please insert frame URL');
+        } else if (!document.getElementById('urlbar').value.includes('http')) {
+          value = "https://" + location.host + "/service/" + encodeURI("http://" + document.getElementById('urlbar').value);
+          document.getElementById(getActiveFrameId()).src = value;
+        } else {
+          value = "https://" + location.host + "/service/" + encodeURI(document.getElementById('urlbar').value);
+          document.getElementById(getActiveFrameId()).src = value;
+        }
         event.preventDefault();
       });
-      document.getElementById('createTab').click();
+      document.getElementById('createTab').click(); // creates one default tab
       document.getElementById('optionsdrop').style.display = 'none';
-      if (!('tabbkg' in localStorage)) {
+      if (!('tabbkg' in localStorage)) { // theming!
         localStorage.setItem('tabbkg', '#202124');
         localStorage.setItem('tabhover', '#292b2e');
         localStorage.setItem('tabact', '#323639');
@@ -1267,9 +1269,10 @@ html {
         } 
       };
       for (iframeIndex = 0; iframeIndex < items.length; iframeIndex++) {
+        // this is what ACTUALLY applies the theme to the tabs
         document.getElementById(items[iframeIndex]).value = localStorage.getItem(items[iframeIndex]);
       };
-      document.cookie = `alloyua=${localStorage.getItem('ua')}`
+      document.cookie = `cua=${localStorage.getItem('ua')}` // custom User Agent (TODO)
       document.head.insertAdjacentHTML("beforeend", `<style>.chrome-tabs.chrome-tabs-dark-theme {background: ${localStorage.getItem('tabbkg')};} .dropdown-content {background-color: ${localStorage.getItem('tabbkg')};} .mock-browser-content {background-color: ${localStorage.getItem('mockb')};} .chrome-tabs.chrome-tabs-dark-theme .chrome-tabs-bottom-bar {background-color: ${localStorage.getItem('tabact')};} .chrome-tabs.chrome-tabs-dark-theme .chrome-tab[active] .chrome-tab-background > svg .chrome-tab-geometry {fill: ${localStorage.getItem('tabact')};} .chrome-tabs.chrome-tabs-dark-theme .chrome-tab .chrome-tab-background > svg .chrome-tab-geometry {fill: ${localStorage.getItem('tabhover')};} .chrome-tabs.chrome-tabs-dark-theme .chrome-tab[active] .chrome-tab-title {color: ${localStorage.getItem('tabacttit')};} .chrome-tabs.chrome-tabs-dark-theme .chrome-tab .chrome-tab-title {color: ${localStorage.getItem('tabinatit')};} #urlbar {background: ${localStorage.getItem('searchbar')}; color: ${localStorage.getItem('nt')}; } #createTab {color: ${localStorage.getItem('nt')}} .dropdown-content frame {color: ${localStorage.getItem('nt')}} #urlbutton {color: ${localStorage.getItem('nt')}} #options {color: ${localStorage.getItem('nt')}} </style>`)
       window.onbeforeunload = function () {};
       //bookmarks
@@ -1279,8 +1282,8 @@ html {
         data.push([document.getElementById(getActiveFrameId()).contentWindow.location.href, getBookmark(), document.getElementById(getActiveFrameId()).contentWindow.document.title]);
         localStorage.setItem('bookmarks', JSON.stringify(data));
       }
-      function setUA(frame) {
-        switch (frame) {
+      function setUA(ua) {
+        switch (ua) {
           case 'chrome':
             break
           case 'firefox':
