@@ -710,7 +710,7 @@ html {
             return closestIndex;
           };
         
-        var i = 1;
+        var tabC = 1;
           const defaultTabProperties = {
             title: 'New tab',
             favicon: false
@@ -784,7 +784,7 @@ html {
               // TODO - Support tabs with different widths / e.g. "pinned" tabs
               const widths = []
               let extraWidthRemaining = totalExtraWidthDueToFlooring
-              for (let i = 0; i < numberOfTabs; i += 1) {
+              for (let n = 0; n < numberOfTabs; n += 1) {
                 const extraWidth = flooredClampedTargetWidth < TAB_CONTENT_MAX_WIDTH && extraWidthRemaining > 0 ? 1 : 0
                 widths.push(flooredClampedTargetWidth + extraWidth)
                 if (extraWidthRemaining > 0) extraWidthRemaining -= 1
@@ -798,8 +798,8 @@ html {
               const tabContentWidths = this.tabContentWidths
         
               let position = TAB_CONTENT_MARGIN
-              tabContentWidths.forEach((width, i) => {
-                const offset = i * TAB_CONTENT_OVERLAP_DISTANCE
+              tabContentWidths.forEach((width, n) => {
+                const offset = n * TAB_CONTENT_OVERLAP_DISTANCE
                 positions.push(position - offset)
                 position += width
               })
@@ -835,9 +835,9 @@ html {
               })
         
               let styleHTML = ''
-              this.tabPositions.forEach((position, i) => {
+              this.tabPositions.forEach((position, n) => {
                 styleHTML += `
-                  .chrome-tabs[data-chrome-tabs-instance-id="${ this.instanceId }"] .chrome-tab:nth-child(${ i + 1 }) {
+                  .chrome-tabs[data-chrome-tabs-instance-id="${ this.instanceId }"] .chrome-tab:nth-child(${ n + 1 }) {
                     transform: translate3d(${ position }px, 0, 0)
                   }
                 `
@@ -847,16 +847,16 @@ html {
         
             createNewTabEl() {
               const div = document.createElement('div')
-              div.innerHTML = `<div ifd="${i++}"class="chrome-tab" onclick="opencity('${i}')">
+              div.innerHTML = `<div ifd="${tabC++}"class="chrome-tab" onclick="opencity('${tabC}')">
               <div class="chrome-tab-dividers"></div>
               <div class="chrome-tab-background">
                 <svg version="1.1" xmlns="http://www.w3.org/2000/svg"><defs><symbol id="chrome-tab-geometry-left" viewBox="0 0 214 36"><path d="M17 0h197v36H0v-2c4.5 0 9-3.5 9-8V8c0-4.5 3.5-8 8-8z"/></symbol><symbol id="chrome-tab-geometry-right" viewBox="0 0 214 36"><use xlink:href="#chrome-tab-geometry-left"/></symbol><clipPath id="crop"><rect class="mask" width="100%" height="100%" x="0"/></clipPath></defs><svg width="52%" height="100%"><use xlink:href="#chrome-tab-geometry-left" width="214" height="36" class="chrome-tab-geometry"/></svg><g transform="scale(-1, 1)"><svg width="52%" height="100%" x="-100%" y="0"><use xlink:href="#chrome-tab-geometry-right" width="214" height="36" class="chrome-tab-geometry"/></svg></g></svg>
               </div>
               <div class="chrome-tab-content">
                 <div class="chrome-tab-favicon"></div>
-                <div class="chrome-tab-title ${i}"></div>
+                <div class="chrome-tab-title ${tabC}"></div>
                 <div class="chrome-tab-drag-handle"></div>
-                <div class="chrome-tab-close" onclick="document.getElementById(${i}).remove();"></div>
+                <div class="chrome-tab-close" onclick="document.getElementById(${tabC}).remove();"></div>
                 
               </div>
             </div>`
@@ -1101,28 +1101,6 @@ html {
           return '/favicon.ico';
         };
       };
-      function rewriteTargets(tabId) {
-        // Rewrites any `a` elements on the page to no longer open in a new tab, but INSTEAD open in a new hypertab!! Does so by detecting the `target` attribute.
-        for (i = 0; document.getElementById(tabId).contentWindow.document.getElementsByTagName("a").length > i; i++) {
-          let urlToCheck = document.getElementById(tabId).contentWindow.document.getElementsByTagName("a")[i]
-          if(urlToCheck.attributes.getNamedItem("target")) {
-            switch(urlToCheck.attributes.getNamedItem("target").textContent) {
-              case "_blank":
-                urlToCheck.removeAttribute("target")
-                urlToCheck.classList.add("a" + i)
-                urlToCheck.setAttribute("href" + i, urlToCheck.href)
-                urlToCheck.setAttribute("href", "javascript:")
-                urlToCheck.setAttribute("onclick", "window.parent.newTab(document.getElementsByClassName(\"a" + i + "\")[0].getAttribute(\"href" + i + "\"))")
-                break
-              case "_parent" || "_top":
-                urlToCheck.removeAttribute("target")
-                break
-              default:
-                break
-            }
-          }
-        }
-      }
       function setInfo(frameId) {
           // Sets tab information
           if (!document.getElementById(frameId).contentWindow.location.href.includes('/service/')) {
@@ -1136,7 +1114,6 @@ html {
           document.getElementById('urlbar').value = decodeURIComponent(regUrl.split('/service/').slice(1).join('/service/')).replace(/\/\//g, match => ++t === 2 ? '' : match)
           document.querySelector(`div[ifd="${+frameId - 1}"]`).children[2].children[0].attributes[1].value = `background-image: url(${getBookmark()})`
           addPageToHistory(frameId, document.getElementById(frameId).contentWindow.location.href);
-          rewriteTargets(frameId);
       }
       function hideId(...x) {
         // Hides hypertab ID.
@@ -1308,13 +1285,7 @@ html {
             break
         }
       }
-      window.open = (url,a,[b]) => { 
-        if(!url) url = "https://presearch.org"
-        window.parent.newTab(url)
-        console.log("window.open params:\n" + url + "\n" + a + "\n" + b)
-      }
       </script>
   </div>
 </body>
-
 </html>
