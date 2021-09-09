@@ -1096,7 +1096,7 @@ html {
       function getBookmark() {
         let abmk = document.getElementById(getActiveFrameId()).contentDocument.querySelector('link[rel="favicon"], link[rel="shortcut icon"], link[rel="icon"]');
         if (abmk !== null) {
-          return abmk.href;
+          return "https://" + location.host + "/service/" + encodeURIComponent(abmk.href);
         } else {
           return '/favicon.ico';
         };
