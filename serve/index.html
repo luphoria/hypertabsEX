@@ -18,7 +18,6 @@
     position: relative;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
     font-size: 12px;
-    width: 100%;
     height: 46px;
     padding: 8px 3px 4px 3px;
     background: #dee1e6;
@@ -36,7 +35,7 @@
     may guess based on the name, it is frame calculator. You can do arithmetic on
     any different CSS units.
     */
-    width: calc(100% - 24px);
+    /* width: 240px; */
     height: 100%;
   }
   .chrome-tabs .chrome-tab {
@@ -169,8 +168,8 @@
     white-space: nowrap;
     margin-left: 4px;
     color: #5f6368;
-    -webkit-mask-image: linear-gradient(90deg, #000 0%, #000 calc(100% - 24px), transparent);
-    mask-image: linear-gradient(90deg, #000 0%, #000 calc(100% - 24px), transparent);
+    /* -webkit-mask-image: linear-gradient(90deg, #000 0%, #000 calc(100% - 24px), transparent);
+    mask-image: linear-gradient(90deg, #000 0%, #000 calc(100% - 24px), transparent); */
   }
   .chrome-tabs .chrome-tab[is-small] .chrome-tab-title {
     margin-left: 0;
@@ -313,7 +312,7 @@
     outline: none;
     height: 30px;
     margin-top: 5px;
-    float: right;
+    /* float: right; */
     font-size: 20px;
     transition: 0.3s;
   }
@@ -393,7 +392,7 @@ html {
     } 
   
     .mock-browser {
-      width: 100%;
+      /* width: 100%; */
       background: #dee1e6;
       border-radius: 8px;
       flex-shrink: 0;
@@ -583,8 +582,7 @@ html {
   <div class='surface'>
     <div class='mock-browser'>
       <div class='chrome-tabs chrome-tabs-dark-theme' id="tabsmain" style='--tab-content-margin: 9px'>
-        <div class='chrome-tabs-content' id='0'>
-        </div>
+        <div class='chrome-tabs-content' id='0' style='width:0px;'></div>
         <div class='chrome-tabs-bottom-bar'></div>
         <style>
           .chrome-tabs .chrome-tab {
@@ -865,7 +863,7 @@ html {
         
             addTab(tabProperties, { animate = true, background = false } = {}) {
               const tabEl = this.createNewTabEl()
-        
+              if(parseInt(document.getElementById(0).style.width.split("px")[0]) + 240 < window.innerWidth - 24) document.getElementById(0).setAttribute("style","width:" + (parseInt(document.getElementById(0).style.width.split("px")[0]) + 240) + "px");
               if (animate) {
                 tabEl.classList.add('chrome-tab-was-just-added')
                 setTimeout(() => tabEl.classList.remove('chrome-tab-was-just-added'), 500)
@@ -909,6 +907,7 @@ html {
             }
          
             removeTab(tabEl) {
+              if((document.getElementById(0).children.length * 240) - parseInt(document.getElementById(0).children[0].style.width.split("px)")[0]) < window.innerWidth - 24) document.getElementById(0).setAttribute("style","width:" + (parseInt(document.getElementById(0).style.width.split("px")[0]) - 240) + "px");
               if (tabEl === this.activeTabEl) {
                 if (tabEl.nextElementSibling) {
                   let tempval = +tabEl.nextElementSibling.getAttribute('ifd') + 1;
