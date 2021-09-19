@@ -753,13 +753,6 @@ html {
               window.addEventListener('resize', _ => {
                 this.cleanUpPreviouslyDraggedTabs()
                 this.layoutTabs()
-                let toAdd = 0
-                if(document.getElementById(0).children.length != 0) { toAdd = document.getElementsByClassName("chrome-tab-drag-handle")[0].offsetWidth * document.getElementById(0).children.length }
-                if(toAdd <= window.innerWidth - 30) {
-                  document.getElementById("createTab").setAttribute("style","margin-left:" + (toAdd + 12 ) + "px")
-                } else {
-                  document.getElementById("createTab").setAttribute("style","margin-left:" + (window.innerWidth - 30) + "px")
-                }
               })
         
               this.hypertabContainer.addEventListener('dblclick', event => {
@@ -822,7 +815,15 @@ html {
         
               return positions
             }
-        
+            updateTabButton() {
+              let toAdd = 0
+                if(document.getElementById(0).children.length != 0) { toAdd = document.getElementsByClassName("chrome-tab-drag-handle")[0].offsetWidth * document.getElementById(0).children.length }
+                if(toAdd <= window.innerWidth - 30) {
+                  document.getElementById("createTab").setAttribute("style","margin-left:" + (toAdd + 12 ) + "px")
+                } else {
+                  document.getElementById("createTab").setAttribute("style","margin-left:" + (window.innerWidth - 30) + "px")
+                }
+            }
             layoutTabs() {
               const tabContentWidths = this.tabContentWidths
         
@@ -849,6 +850,7 @@ html {
                 `
               })
               this.styleEl.innerHTML = styleHTML
+              this.updateTabButton()
             }
         
             createNewTabEl() {
@@ -870,14 +872,6 @@ html {
             }
         
             addTab(tabProperties, { animate = true, background = false } = {}) {
-              let toAdd = 252
-              if(document.getElementById(0).children.length != 0) { toAdd = document.getElementsByClassName("chrome-tab-drag-handle")[0].offsetWidth }
-              if(parseInt(document.getElementById("createTab").style["marginLeft"].split("px")[0]) + toAdd <= window.innerWidth - 30) {
-                document.getElementById("createTab").setAttribute("style","margin-left:" + (parseInt(document.getElementById("createTab").style["marginLeft"].split("px")[0]) + toAdd ) + "px")
-              } else {
-                document.getElementById("createTab").setAttribute("style","margin-left:" + (window.innerWidth - 30) + "px")
-              }
-
               const tabEl = this.createNewTabEl()
         
               if (animate) {
@@ -923,11 +917,6 @@ html {
             }
          
             removeTab(tabEl) {
-              let toRem = document.getElementsByClassName("chrome-tab-drag-handle")[0].offsetWidth
-              if(document.getElementById(0).children.length == 1) toRem = 252
-              if(parseInt(document.getElementById("createTab").style["marginLeft"].split("px")[0]) - toRem <= window.innerWidth - 30) {
-                document.getElementById("createTab").setAttribute("style","margin-left:" + (parseInt(document.getElementById("createTab").style["marginLeft"].split("px")[0]) - toRem ) + "px")
-              }
               if (tabEl === this.activeTabEl) {
                 if (tabEl.nextElementSibling) {
                   let tempval = +tabEl.nextElementSibling.getAttribute('ifd') + 1;
