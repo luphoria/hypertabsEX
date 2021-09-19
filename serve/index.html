@@ -753,6 +753,13 @@ html {
               window.addEventListener('resize', _ => {
                 this.cleanUpPreviouslyDraggedTabs()
                 this.layoutTabs()
+                let toAdd = 0
+                if(document.getElementById(0).children.length != 0) { toAdd = document.getElementsByClassName("chrome-tab-drag-handle")[0].offsetWidth * document.getElementById(0).children.length }
+                if(toAdd <= window.innerWidth - 30) {
+                  document.getElementById("createTab").setAttribute("style","margin-left:" + (toAdd + 12 ) + "px")
+                } else {
+                  document.getElementById("createTab").setAttribute("style","margin-left:" + (window.innerWidth - 30) + "px")
+                }
               })
         
               this.hypertabContainer.addEventListener('dblclick', event => {
