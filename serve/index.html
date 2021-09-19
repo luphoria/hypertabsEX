@@ -307,16 +307,6 @@
     width: 100%; 
   }
   
-  #createTab {
-    color: #FFF;
-    outline: none;
-    height: 30px;
-    margin-top: 5px;
-    /* float: right; */
-    font-size: 20px;
-    transition: 0.3s;
-  }
-  
   #createTab:hover {
     color: #e04c4c;
   }
@@ -486,10 +476,12 @@ html {
     border: none;
     position: absolute;
     outline: none;
-    top: 0;
-    right: 0;
+    top: 10px;
     font-size: 20px;
     -webkit-font-smoothing: antialiased;
+    color: #FFF;
+    height: 30px;
+    transition: 0.3s;
   }
   .iframething {
   width: 100%;
@@ -598,7 +590,7 @@ html {
           }
         </style>
       </div>
-      <button class='material-icons chrome-tab' data-add-tab id='createTab' onclick='newTab("https://presearch.org")'>add</button>
+      <button style='margin-left:0px;' class='material-icons chrome-tab' data-add-tab id='createTab' onclick='newTab("https://presearch.org")'>add</button>
       <div class='mock-browser-content'>
         <!-- back, forward, reload -->
         <button id='urlbutton'
@@ -863,7 +855,10 @@ html {
         
             addTab(tabProperties, { animate = true, background = false } = {}) {
               const tabEl = this.createNewTabEl()
-              if(parseInt(document.getElementById(0).style.width.split("px")[0]) + 240 < window.innerWidth - 24) document.getElementById(0).setAttribute("style","width:" + (parseInt(document.getElementById(0).style.width.split("px")[0]) + 240) + "px");
+              if(parseInt(document.getElementById(0).style.width.split("px")[0]) + 240 <= window.innerWidth - 24) {
+                document.getElementById("createTab").setAttribute("style","margin-left:" + (parseInt(document.getElementById(0).style.width.split("px")[0]) + 240) + "px")
+                document.getElementById(0).setAttribute("style","width:" + (parseInt(document.getElementById(0).style.width.split("px")[0]) + 240) + "px")
+              }
               if (animate) {
                 tabEl.classList.add('chrome-tab-was-just-added')
                 setTimeout(() => tabEl.classList.remove('chrome-tab-was-just-added'), 500)
@@ -907,7 +902,10 @@ html {
             }
          
             removeTab(tabEl) {
-              if((document.getElementById(0).children.length * 240) - parseInt(document.getElementById(0).children[0].style.width.split("px)")[0]) < window.innerWidth - 24) document.getElementById(0).setAttribute("style","width:" + (parseInt(document.getElementById(0).style.width.split("px")[0]) - 240) + "px");
+              if((document.getElementById(0).children.length * 240) - parseInt(document.getElementById(0).children[0].style.width.split("px)")[0]) < window.innerWidth - 24) {
+                document.getElementById("createTab").setAttribute("style","margin-left:" + (parseInt(document.getElementById(0).style.width.split("px")[0]) - 240) + "px")
+                document.getElementById(0).setAttribute("style","width:" + (parseInt(document.getElementById(0).style.width.split("px")[0]) - 240) + "px")
+              }
               if (tabEl === this.activeTabEl) {
                 if (tabEl.nextElementSibling) {
                   let tempval = +tabEl.nextElementSibling.getAttribute('ifd') + 1;
