@@ -312,7 +312,7 @@
     color: #FFF;
     outline: none;
     height: 30px;
-    margin-top: 5px;
+    margin-top: 9px;
     float: right;
     font-size: 20px;
     transition: 0.3s;
@@ -488,7 +488,6 @@ html {
     position: absolute;
     outline: none;
     top: 0;
-    right: 0;
     font-size: 20px;
     -webkit-font-smoothing: antialiased;
   }
@@ -588,7 +587,7 @@ html {
         <div class='chrome-tabs-bottom-bar'></div>
         <style>
           .chrome-tabs .chrome-tab {
-            width: 258px;
+            width: 240px;
           }
 
           .chrome-tabs .chrome-tab:nth-child(1) {
@@ -600,7 +599,7 @@ html {
           }
         </style>
       </div>
-      <button class='material-icons chrome-tab' data-add-tab id='createTab' onclick='newTab("https://presearch.org")'>add</button>
+      <button style='margin-left:0px;' class='material-icons chrome-tab' data-add-tab id='createTab' onclick='newTab("https://presearch.org")'>add</button>
       <div class='mock-browser-content'>
         <!-- back, forward, reload -->
         <button id='urlbutton'
@@ -864,6 +863,14 @@ html {
             }
         
             addTab(tabProperties, { animate = true, background = false } = {}) {
+              let toAdd = 252
+              if(document.getElementById(0).children.length != 0) { toAdd = document.getElementsByClassName("chrome-tab-drag-handle")[0].offsetWidth }
+              if(parseInt(document.getElementById("createTab").style["marginLeft"].split("px")[0]) + toAdd <= window.innerWidth - 30) {
+                document.getElementById("createTab").setAttribute("style","margin-left:" + (parseInt(document.getElementById("createTab").style["marginLeft"].split("px")[0]) + toAdd ) + "px")
+              } else {
+                document.getElementById("createTab").setAttribute("style","margin-left:" + (window.innerWidth - 30) + "px")
+              }
+
               const tabEl = this.createNewTabEl()
         
               if (animate) {
@@ -909,6 +916,11 @@ html {
             }
          
             removeTab(tabEl) {
+              let toRem = document.getElementsByClassName("chrome-tab-drag-handle")[0].offsetWidth
+              if(document.getElementById(0).children.length == 1) toRem = 252
+              if(parseInt(document.getElementById("createTab").style["marginLeft"].split("px")[0]) - toRem <= window.innerWidth - 30) {
+                document.getElementById("createTab").setAttribute("style","margin-left:" + (parseInt(document.getElementById("createTab").style["marginLeft"].split("px")[0]) - toRem ) + "px")
+              }
               if (tabEl === this.activeTabEl) {
                 if (tabEl.nextElementSibling) {
                   let tempval = +tabEl.nextElementSibling.getAttribute('ifd') + 1;
