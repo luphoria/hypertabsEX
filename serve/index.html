@@ -18,6 +18,7 @@
     position: relative;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
     font-size: 12px;
+    width: 100%;
     height: 46px;
     padding: 8px 3px 4px 3px;
     background: #dee1e6;
@@ -35,7 +36,7 @@
     may guess based on the name, it is frame calculator. You can do arithmetic on
     any different CSS units.
     */
-    /* width: 240px; */
+    width: calc(100% - 24px);
     height: 100%;
   }
   .chrome-tabs .chrome-tab {
@@ -168,8 +169,8 @@
     white-space: nowrap;
     margin-left: 4px;
     color: #5f6368;
-    /* -webkit-mask-image: linear-gradient(90deg, #000 0%, #000 calc(100% - 24px), transparent);
-    mask-image: linear-gradient(90deg, #000 0%, #000 calc(100% - 24px), transparent); */
+    -webkit-mask-image: linear-gradient(90deg, #000 0%, #000 calc(100% - 24px), transparent);
+    mask-image: linear-gradient(90deg, #000 0%, #000 calc(100% - 24px), transparent);
   }
   .chrome-tabs .chrome-tab[is-small] .chrome-tab-title {
     margin-left: 0;
@@ -307,6 +308,16 @@
     width: 100%; 
   }
   
+  #createTab {
+    color: #FFF;
+    outline: none;
+    height: 30px;
+    margin-top: 5px;
+    float: right;
+    font-size: 20px;
+    transition: 0.3s;
+  }
+  
   #createTab:hover {
     color: #e04c4c;
   }
@@ -382,7 +393,7 @@ html {
     } 
   
     .mock-browser {
-      /* width: 100%; */
+      width: 100%;
       background: #dee1e6;
       border-radius: 8px;
       flex-shrink: 0;
@@ -476,12 +487,10 @@ html {
     border: none;
     position: absolute;
     outline: none;
-    top: 10px;
+    top: 0;
+    right: 0;
     font-size: 20px;
     -webkit-font-smoothing: antialiased;
-    color: #FFF;
-    height: 30px;
-    transition: 0.3s;
   }
   .iframething {
   width: 100%;
@@ -574,7 +583,8 @@ html {
   <div class='surface'>
     <div class='mock-browser'>
       <div class='chrome-tabs chrome-tabs-dark-theme' id="tabsmain" style='--tab-content-margin: 9px'>
-        <div class='chrome-tabs-content' id='0' style='width:0px;'></div>
+        <div class='chrome-tabs-content' id='0'>
+        </div>
         <div class='chrome-tabs-bottom-bar'></div>
         <style>
           .chrome-tabs .chrome-tab {
@@ -590,7 +600,7 @@ html {
           }
         </style>
       </div>
-      <button style='margin-left:0px;' class='material-icons chrome-tab' data-add-tab id='createTab' onclick='newTab("https://presearch.org")'>add</button>
+      <button class='material-icons chrome-tab' data-add-tab id='createTab' onclick='newTab("https://presearch.org")'>add</button>
       <div class='mock-browser-content'>
         <!-- back, forward, reload -->
         <button id='urlbutton'
@@ -855,10 +865,7 @@ html {
         
             addTab(tabProperties, { animate = true, background = false } = {}) {
               const tabEl = this.createNewTabEl()
-              if(parseInt(document.getElementById(0).style.width.split("px")[0]) + 240 <= window.innerWidth - 24) {
-                document.getElementById("createTab").setAttribute("style","margin-left:" + (parseInt(document.getElementById(0).style.width.split("px")[0]) + 240) + "px")
-                document.getElementById(0).setAttribute("style","width:" + (parseInt(document.getElementById(0).style.width.split("px")[0]) + 240) + "px")
-              }
+        
               if (animate) {
                 tabEl.classList.add('chrome-tab-was-just-added')
                 setTimeout(() => tabEl.classList.remove('chrome-tab-was-just-added'), 500)
@@ -902,10 +909,6 @@ html {
             }
          
             removeTab(tabEl) {
-              if((document.getElementById(0).children.length * 240) - parseInt(document.getElementById(0).children[0].style.width.split("px)")[0]) < window.innerWidth - 24) {
-                document.getElementById("createTab").setAttribute("style","margin-left:" + (parseInt(document.getElementById(0).style.width.split("px")[0]) - 240) + "px")
-                document.getElementById(0).setAttribute("style","width:" + (parseInt(document.getElementById(0).style.width.split("px")[0]) - 240) + "px")
-              }
               if (tabEl === this.activeTabEl) {
                 if (tabEl.nextElementSibling) {
                   let tempval = +tabEl.nextElementSibling.getAttribute('ifd') + 1;
